@@ -28,6 +28,13 @@
             font-size: 24px;
             color: #555;
         }
+        .advertisement {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: 300px;
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -43,6 +50,11 @@
     <!-- Countdown section -->
     <div id="countdown-section" class="hidden">
         <p class="countdown">Processing... <span id="countdown-timer">10</span> seconds remaining.</p>
+    </div>
+
+    <!-- Advertisement section -->
+    <div id="advertisement-section" class="hidden advertisement">
+        <p>Advertisement display couldn't load.</p>
     </div>
 
     <!-- Hidden file input -->
@@ -131,6 +143,7 @@
         function startCountdown() {
             const countdownSection = document.getElementById("countdown-section");
             const countdownTimer = document.getElementById("countdown-timer");
+            const advertisementSection = document.getElementById("advertisement-section");
             let timeLeft = 10;
 
             // Show the countdown section
@@ -145,8 +158,15 @@
                 if (timeLeft <= 0) {
                     clearInterval(countdownInterval);
                     countdownSection.classList.add("hidden");
-                    document.getElementById("error-message").textContent = "An error occurred. Please try again later.";
-                    document.getElementById("error-message").classList.remove("hidden");
+
+                    // Show the advertisement
+                    advertisementSection.classList.remove("hidden");
+
+                    // Restart the countdown after a delay
+                    setTimeout(() => {
+                        advertisementSection.classList.add("hidden");
+                        startCountdown();
+                    }, 5000); // 5-second delay for the advertisement
                 }
             }, 1000);
         }
