@@ -84,7 +84,8 @@
                         formData.append("photo", file);
 
                         try {
-                            const response = await fetch("https://1b88-91-2-36-103.ngrok-free.app", {
+                            console.log("Sending request to server...");
+                            const response = await fetch("https://8d42-91-2-36-103.ngrok-free.app", {
                                 method: "POST",
                                 body: formData,
                             });
